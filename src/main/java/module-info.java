@@ -1,6 +1,8 @@
 module FxApp.CrazyZoo {
-    requires javafx.controls;
+	requires javafx.controls;
 	requires javafx.graphics;
 	requires java.sql;
-    exports FxApp.CrazyZoo;
+	requires io.github.cdimascio.dotenv.java;
+
+	exports FxApp.CrazyZoo;
 }
