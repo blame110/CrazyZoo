@@ -1,11 +1,11 @@
 package FxApp.CrazyZoo.panel;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import FxApp.model.AnimalDAO;
+import FxApp.model.AnimalDO;
 import FxApp.model.UtilsBD;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -45,7 +45,7 @@ public class AnimalPanel extends GridPane {
 		Connection con = UtilsBD.ConectarBD();
 
 		//Cargamos desde BD todos los animales DO
-		ResultSet rs = AnimalDAO.getAnimales(con);
+		ArrayList<AnimalDO> listaAnimales = AnimalDAO.getAnimalesDO(con);
 
 		//Recorremos los datos de los animales
 		try {

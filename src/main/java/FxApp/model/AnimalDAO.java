@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class AnimalDAO {
 
@@ -27,6 +28,54 @@ public class AnimalDAO {
 			ResultSet rs = stmt.executeQuery("select * from animal");
 
 			return rs;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		}
+
+		return null;
+	}
+
+	/**
+	 * La función devuelve todos los animales de la bd
+	 * @param con Conexion activa a la bd
+	 * @return un ResultSet cargado con los animales
+	 */
+	public static ArrayList<AnimalDO> getAnimalesDO(Connection con) {
+
+		try {
+
+			ArrayList<AnimalDO> listaAnimales = new ArrayList<AnimalDO>();
+
+			//Con la conexion ya activa (con) crea una sentencia para poder ejecutar
+			//sentencias sql
+			Statement stmt = con.createStatement();
+
+			//Directamente ejecutamos la sentencia
+			//Si es una sentenci tipo select se hace con executeQuery
+			//Esta nos devuelve un objeto de tipo ResultSet con los datos de la query
+			ResultSet rs = stmt.executeQuery("select * from animal");
+
+			//Recorremos el resultset
+			while (rs.next()) {
+
+				//Creamos un animalDO
+				AnimalDO animal = new AnimalDO();
+
+				//Cargamos en el animalDO los datos del registro actual del resultset
+				animal.setIdAnimal(rs.getInt("idanimal"));
+				animal.setNombre(rs.getString("nombre"));
+				animal.setEspecie(rs.getString("especie"));
+				animal.setFecha_nac(rs.getDate("fecha_nac"));
+				animal.setSexo(rs.getString("sexo").charAt(0));
+				animal.setJaula_idJaula(rs.getInt("Jaula_idJaula"));
+
+				//Ponemos el AnimalDO en la arraylist
+				listaAnimales.add(animal);
+			}
+
+			return listaAnimales;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
