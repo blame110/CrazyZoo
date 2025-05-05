@@ -2,6 +2,7 @@ package FxApp.CrazyZoo.panel;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import FxApp.model.AnimalDAO;
@@ -45,6 +46,36 @@ public class AnimalPanel extends GridPane {
 
 		//Cargamos desde BD todos los animales DO
 		ResultSet rs = AnimalDAO.getAnimales(con);
+
+		//Recorremos los datos de los animales
+		try {
+			while (rs.next()) {
+
+				lblIdAnimal = new Label("Id Animal");
+				lblNombre = new Label("Nombre");
+				lblEspecie = new Label("Especie");
+				lblFecNac = new Label("Fecha Nacimiento");
+				lblSexo = new Label("Sexo");
+				lblIdJaula = new Label("Id Jaula");
+
+				listaElementos = new ArrayList<Node>();
+
+				//Añadimos la cabecera
+				listaElementos.add(lblIdAnimal);
+				listaElementos.add(lblNombre);
+				listaElementos.add(lblEspecie);
+				listaElementos.add(lblFecNac);
+				listaElementos.add(lblSexo);
+				listaElementos.add(lblIdJaula);
+
+				//añadimos al grid los elementos
+				insertarFila(0, listaElementos);
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
