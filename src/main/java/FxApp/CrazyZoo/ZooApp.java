@@ -3,6 +3,7 @@ package FxApp.CrazyZoo;
 import FxApp.CrazyZoo.panel.AnimalPanel;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
@@ -26,9 +27,11 @@ public class ZooApp extends Application {
 
 		//Creamos el gridpane de animales
 		AnimalPanel pAnimal = new AnimalPanel();
+		//Metemos el panel de animales en un scroll
+		ScrollPane scrollP = new ScrollPane(pAnimal);
 
 		//Añadimos el panel a la pestaña
-		tAnimales.setContent(pAnimal);
+		tAnimales.setContent(scrollP);
 
 		//Añadimos las pestañas al panel pestañoso
 		tabPes.getTabs().addAll(tAnimales, tZip, tSsh);
