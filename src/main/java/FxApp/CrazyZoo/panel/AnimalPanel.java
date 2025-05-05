@@ -1,7 +1,6 @@
 package FxApp.CrazyZoo.panel;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import FxApp.model.AnimalDAO;
@@ -96,19 +95,13 @@ public class AnimalPanel extends GridPane {
 				//llamo a la funcion deleteAnimal con la conexion y el idAnimal actual
 				//Para borrarlo
 				AnimalDAO.deleteAnimal(con, animal.getIdAnimal());
-				this = new AnimalPanel();
+
 			});
 
 			//Pasamos a la siguiente fila
 			filaActual++;
 		}
 
-		try {
-			con.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
