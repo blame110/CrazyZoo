@@ -3,6 +3,7 @@ package FxApp.CrazyZoo.panel;
 import java.sql.Connection;
 import java.util.ArrayList;
 
+import FxApp.CrazyZoo.window.AddAnimalWindow;
 import FxApp.model.AnimalDAO;
 import FxApp.model.AnimalDO;
 import FxApp.model.UtilsBD;
@@ -14,7 +15,19 @@ import javafx.scene.layout.GridPane;
 
 public class AnimalPanel extends GridPane {
 
+	public Connection con = null;
+
 	public AnimalPanel() {
+
+		//Nos conectamos a Base de datos
+		con = UtilsBD.ConectarBD();
+		cargarPanel();
+
+	}
+
+	public void cargarPanel() {
+
+		this.getChildren().clear();
 
 		Button btnCrear = new Button("Insertar Animal Nuevo");
 		this.add(btnCrear, 0, 0, 7, 1);
@@ -46,9 +59,6 @@ public class AnimalPanel extends GridPane {
 
 		//añadimos al grid los elementos
 		insertarFila(1, listaElementos);
-
-		//Nos conectamos a Base de datos
-		Connection con = UtilsBD.ConectarBD();
 
 		//Cargamos desde BD todos los animales DO
 		ArrayList<AnimalDO> listaAnimales = AnimalDAO.getAnimalesDO(con);
@@ -89,12 +99,25 @@ public class AnimalPanel extends GridPane {
 			//añadimos al grid los elementos
 			insertarFila(filaActual, listaElementos);
 
+			/**********************************************************
+			 * EVENTOS
+			 **********************************************************/
+			//Cuando pulsamos sobre crear animal mostramos
+			//la ventana con el formulario de insercion
+			btnCrear.setOnAction(e -> {
+
+				AddAnimalWindow animalWindow = new AddAnimalWindow();
+				animalWindow.show();
+
+			});
+
 			//Añadimos un evento para que cuando se pulse el boton eliminar borre el animal de la fila actual
 			btnEliminar.setOnAction(e -> {
 				//Cuando se pulse el boton
 				//llamo a la funcion deleteAnimal con la conexion y el idAnimal actual
 				//Para borrarlo
 				AnimalDAO.deleteAnimal(con, animal.getIdAnimal());
+				this.cargarPanel();
 
 			});
 
