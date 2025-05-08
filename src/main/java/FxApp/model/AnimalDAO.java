@@ -1,7 +1,6 @@
 package FxApp.model;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -169,10 +168,16 @@ public class AnimalDAO {
 
 			PreparedStatement pstmt = con.prepareStatement(query);
 
+			//Convertimos a Date de tipo sql la fecha que recibimos de nacimiento
+			java.sql.Date fechaNacSql = new java.sql.Date(animal.getFecha_nac().getYear(),
+					animal.getFecha_nac().getMonth(), animal.getFecha_nac().getDay());
+
 			//Asignamos el parametro id en la primera interrogacion ( y la unica)
 			pstmt.setString(1, animal.getNombre());
 			pstmt.setString(2, animal.getEspecie());
-			pstmt.setDate(3, (Date) animal.getFecha_nac());
+
+			pstmt.setDate(3, fechaNacSql);
+
 			pstmt.setString(4, Character.toString(animal.getSexo()));
 			pstmt.setInt(5, animal.getJaula_idJaula());
 

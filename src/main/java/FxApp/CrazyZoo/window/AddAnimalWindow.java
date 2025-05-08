@@ -1,7 +1,15 @@
 package FxApp.CrazyZoo.window;
 
+import java.sql.Connection;
+import java.time.ZoneId;
+import java.util.Date;
+
+import FxApp.model.AnimalDAO;
+import FxApp.model.AnimalDO;
+import FxApp.model.UtilsBD;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -73,9 +81,6 @@ public class AddAnimalWindow extends Stage {
 
 		//añadimos al gridpanel los componentes
 		gPanel.add(lblNombre, 0, 0);
-		//Los ultimos dos numeros de la funcion add
-		//indican la cantidad de columnas y filas que ocupa el elemento
-		//Es similar a las propiedades colspan y rowspan de html
 		gPanel.add(txtNombre, 1, 0, 3, 1);
 		gPanel.add(lblEspecie, 0, 1);
 		gPanel.add(chbEspecie, 1, 1, 3, 1);
@@ -83,11 +88,57 @@ public class AddAnimalWindow extends Stage {
 		gPanel.add(radFemenino, 1, 2);
 		gPanel.add(radMasculino, 2, 2);
 		gPanel.add(radIndefinido, 3, 2);
+		gPanel.add(lblFecNac, 0, 3);
+		gPanel.add(fecNac, 1, 3, 3, 1);
+		gPanel.add(lblJaula, 0, 4);
+		gPanel.add(chbJaula, 1, 4, 3, 1);
+
+		Button btnCrear = new Button("Insertar Animal Nuevo");
+		gPanel.add(btnCrear, 0, 5, 3, 1);
+
+		btnCrear.setOnAction(e -> {
+
+			char sexo = 'I';
+			//Dependiendo del radio seleccionado le asignamos una letra al sexo
+			if (tgSexo.getSelectedToggle() == radMasculino) {
+				sexo = 'M';
+			} else if (tgSexo.getSelectedToggle() == radFemenino) {
+				sexo = 'F';
+			}
+
+			//Convertimos la fecha del datepicker desde localdate a Date
+			Date dateFecNac = Date.from(fecNac.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+			//llamamos a la funcion insertar para que se introduzca el nuevo animal en BD
+			insertarAnimal(txtNombre.getText(), (String) chbEspecie.getValue(), sexo, dateFecNac,
+					(int) chbJaula.getValue());
+
+		});
 
 		var scene = new Scene(gPanel, 500, 400);
 
 		this.setScene(scene);
 
+	}
+
+	/**
+	 * Funcion que recibe los datos de un animal y los guarda en BD
+	 * @param nombre
+	 * @param especie
+	 * @param sexo
+	 * @param fecNac
+	 * @param jaula
+	 */
+	public void insertarAnimal(String nombre, String especie, char sexo, Date fecNac, int jaula) {
+
+		//Con los datos que recibimos del formulario creamos un animalDO
+		AnimalDO animal = new AnimalDO(1, nombre, especie, fecNac, sexo, jaula);
+
+		//Nos conectamos a BD
+		Connection con = UtilsBD.ConectarBD();
+
+		//Insertamos el animal en BD
+		AnimalDAO.insertAnimal(con, animal);
 	}
 
 }
