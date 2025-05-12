@@ -28,6 +28,12 @@
 			<artifactId>dotenv-java</artifactId>
 			<version>3.2.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.hierynomus/sshj -->
+		<dependency>
+			<groupId>com.hierynomus</groupId>
+			<artifactId>sshj</artifactId>
+			<version>0.39.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -17,24 +17,18 @@ import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 
-public class SshPanel extends GridPane {
+public class SshPanel2 extends GridPane {
 
 	//Pongo el textarea compartido en la clase para que las 
 	//Funciones puedan usuarlo y escribir en él el resultado
 	//de los comandos
 	private TextArea outputArea;
 
-	//Creamos un objeto de tipo sshclient para conectarnos con un servidor ssh y ejecutar comandos
 	private SSHClient sshClient;
 
-	//Los comandos ssh deben de ejecutarse en un hilo (proceso) distinto al de la app principal
-	//Usaremos la clase ExecutorService para crear hilos de ejecucion de los comandos
-	//Esto es necesario porque nos tenemos que quedar esperando a la respuesta del comando
-	//y recogerla para mostrarla, siempre que hay un tiempo de espera hay que crear un nuevo hilo
-	//Para no bloquear la aplicacion principal
 	private final ExecutorService executor = Executors.newCachedThreadPool();
 
-	public SshPanel() {
+	public SshPanel2() {
 
 		//Ponemos el espaciado
 		this.setVgap(10);
@@ -88,15 +82,14 @@ public class SshPanel extends GridPane {
 		//Añadimos el vBox al final del grid
 		this.add(commandBox, 0, 5, 2, 1);
 
-		/****************************+
+		/***************************************************+
 		 * EVENTOS
-		 ************************/
+		 *************************************************/
 		connectButton.setOnAction(e -> {
 
 			executor.execute(() -> connectSSH(hostField.getText(), Integer.parseInt(portField.getText()),
 					userField.getText(), passField.getText()));
 
-			//Deshabilitamos el boton de conectar, habilitamos el de desconectar y el de ejecutar comando
 			connectButton.setDisable(true);
 			disconnectButton.setDisable(false);
 			executeButton.setDisable(false);
@@ -106,23 +99,18 @@ public class SshPanel extends GridPane {
 		disconnectButton.setOnAction(e -> {
 
 			executor.execute(() -> disconnectSSH());
-			outputArea.clear();
 
 			connectButton.setDisable(false);
 			disconnectButton.setDisable(true);
 			executeButton.setDisable(true);
-
 		});
 
 		executeButton.setOnAction(e -> {
-
 			String command = commandField.getText();
-
 			if (!command.isEmpty()) {
 				executor.execute(() -> executeCommand(command));
 				commandField.clear();
 			}
-
 		});
 
 	}
@@ -151,55 +139,45 @@ public class SshPanel extends GridPane {
 	}
 
 	private void disconnectSSH() {
-
 		try {
 			if (sshClient != null && sshClient.isConnected()) {
 				sshClient.disconnect();
-				appendOutput("Desconectando Correctamente! ");
-
+				executor.shutdown();
+				appendOutput("Disconnected from server");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			appendOutput("Error Al desconectar! ");
+			appendOutput("Error disconnecting: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
-	private void executeCommand(String Command) {
-
-		//Si no estamos conectados no podemos ejecutar el comando, nos salimos
+	private void executeCommand(String command) {
 		if (sshClient == null || !sshClient.isConnected()) {
-			appendOutput("No connected to server");
+			appendOutput("Not connected to any server");
 			return;
 		}
 
-		try {
-			//Recogemos la sesion ssh
-			Session session = sshClient.startSession();
-			//Ejecutamos el comando y recogemos el objeto para recibir la respuesta cuando esta llegue
-			Command cmd = session.exec(Command);
+		try (Session session = sshClient.startSession()) {
+			appendOutput("$ " + command);
 
-			//Para recoger la salida del comando leemos del inputstream con la funcion readFully
+			Command cmd = session.exec(command);
 			String output = net.schmizz.sshj.common.IOUtils.readFully(cmd.getInputStream()).toString();
 			String error = net.schmizz.sshj.common.IOUtils.readFully(cmd.getErrorStream()).toString();
 
 			cmd.join();
 
-			//Si hay salida de comando la mostramos por el textarea
 			if (!output.isEmpty()) {
 				appendOutput(output);
 			}
-
-			//Si hay salida de error la mostramos por el textarea
 			if (!error.isEmpty()) {
 				appendOutput("Error: " + error);
 			}
 
-		} catch (Exception e) {
-			appendOutput("Error executing the command:" + e.getMessage());
+			appendOutput("Command exited with status: " + cmd.getExitStatus());
+		} catch (IOException e) {
+			appendOutput("Error executing command: " + e.getMessage());
 			e.printStackTrace();
 		}
-
 	}
 
 	private void appendOutput(String text) {

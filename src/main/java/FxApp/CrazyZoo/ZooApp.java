@@ -1,6 +1,7 @@
 package FxApp.CrazyZoo;
 
 import FxApp.CrazyZoo.panel.AnimalPanel;
+import FxApp.CrazyZoo.panel.SshPanel;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
@@ -32,6 +33,10 @@ public class ZooApp extends Application {
 
 		//Añadimos el panel a la pestaña
 		tAnimales.setContent(scrollP);
+
+		//Creamos el panel ssh
+		SshPanel sshP = new SshPanel();
+		tSsh.setContent(sshP);
 
 		//Añadimos las pestañas al panel pestañoso
 		tabPes.getTabs().addAll(tAnimales, tZip, tSsh);
