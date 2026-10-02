@@ -20,12 +20,12 @@ public class FlowPanel extends Application {
 	@Override
 	public void start(Stage stage) {
 
-		String javaVersion = SystemInfo.javaVersion();
+		String javaVersion1 = SystemInfo.javaVersion();
 		var javafxVersion = SystemInfo.javafxVersion();
 
 		FlowPane fPanel = new FlowPane();
 
-		//Controles del panel
+		// Controles del panel
 		Label lblNombre = new Label("Nombre");
 		TextField txtNombre = new TextField();
 		Label lblEspecie = new Label("Especie");
@@ -33,7 +33,8 @@ public class FlowPanel extends Application {
 		chbEspecie.getItems().addAll("felino", "pez", "pajaro");
 		Label lblSexo = new Label("Sexo");
 
-		//Para que los radiobuttons sean un unico campo hay que meterlos en un togglegroup
+		// Para que los radiobuttons sean un unico campo hay que meterlos en un
+		// togglegroup
 		ToggleGroup tgSexo = new ToggleGroup();
 		RadioButton radMasculino = new RadioButton("Masculino");
 		RadioButton radFemenino = new RadioButton("Femenino");
@@ -48,17 +49,17 @@ public class FlowPanel extends Application {
 			lblEdad.setText("Edad " + ((int) sldEdad.getValue()));
 		});
 
-		//Ponemos espaciado entre los elementos
+		// Ponemos espaciado entre los elementos
 		fPanel.setVgap(20);
 		fPanel.setHgap(20);
 
-		//Espaciado entre bordes y contenido
+		// Espaciado entre bordes y contenido
 		fPanel.setPadding(new Insets(10, 10, 10, 10));
 
-		//Por defecto la especie pez es la seleccionada
+		// Por defecto la especie pez es la seleccionada
 		chbEspecie.getSelectionModel().select(1);
 
-		//añadimos al panelflow los componentes
+		// añadimos al panelflow los componentes
 		fPanel.getChildren().addAll(lblNombre, txtNombre, lblEspecie, chbEspecie, lblSexo, radMasculino, radFemenino,
 				radIndefinido, lblEdad, sldEdad);
 
